@@ -30,7 +30,7 @@ for i, file in enumerate(score_files):
             df = pd.DataFrame(df)
         for index, row in df.iterrows():
             idx = row['Index']
-            score = row['res得分']
+            score = row['resScore']
             if idx not in data:
                 data[idx] = {}
             data[idx][houzhui[i]] = score
