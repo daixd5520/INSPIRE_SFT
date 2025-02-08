@@ -6,8 +6,8 @@ model_template_dict = {
     'llama2-13b': 'llama2'
 }
 datasets=['wizard','dolly']
-model=models[2]# TODO @JJF 选择
-dataset=datasets[0]# TODO @JJF 选择
+model=models[2]
+dataset=datasets[0]
 merge_path=f"../lora_ckp/merged/{model}_{dataset}"
 model_paths=[merge_path+"1epo",merge_path+"2epo",merge_path]
 
@@ -36,7 +36,6 @@ for i, file in enumerate(score_files):
             data[idx][houzhui[i]] = score
             print(f"data[{idx}][{houzhui[i]}] = {score}")
 
-# 计算 2epo 和 1epo 的分数差值，并记录 Index 和对应分数差值
 score_diff = []
 for idx, scores in data.items():
     score_1epo = scores.get("1epo", -float('inf'))
@@ -46,19 +45,15 @@ for idx, scores in data.items():
 
 score_diff_df = pd.DataFrame(score_diff, columns=["Index", "score_diff"])
 
-# 排序
 score_diff_df = score_diff_df.sort_values(by="score_diff", ascending=True)
 print(f"score_diff_df:{score_diff_df}")
 
-# 定义要删除的行数
-delete_counts = [8000, 12000, 20000,24000,32000,40000,48000,60000] # TODO @JJF wizard
-# delete_counts = [4000,6000,8000,10000] # TODO @JJF dolly
+delete_counts = [8000, 12000, 20000,24000,32000,40000,48000,60000] 
 
 with open(f"../datasets/sft/{dataset}.json", "r") as f:
     original_data = json.load(f)
 
 for delete_count in delete_counts:
-    # 获取要保留的 Index,2epo-1epo分差越大越值得保留
     remaining_indices = score_diff_df["Index"].iloc[delete_count:].tolist()
     # print("//////////////////////////////////////////")
     remain_diff=score_diff_df["score_diff"].iloc[delete_count:].tolist()
@@ -67,15 +62,13 @@ for delete_count in delete_counts:
     
     remaining_data = [original_data[int(idx)] for idx in remaining_indices]
     
-    # 保存处理后的数据
     output_file = f"../datasets/sft/{dataset}_{model}del{delete_count}.json"
     # output_file = f"../datasets/sft/fft_{dataset}_{model}del{delete_count}.json"
     # output_file = f"../datasets/sft/rmbert_{dataset}_{model}del{delete_count}.json"
     with open(output_file, "w") as f:
         json.dump(remaining_data, f, indent=4)
     
-    # 输出文件的数据行数
-    print(f"{output_file} 行数: {len(remaining_data)}")
+    print(f"{output_file} line count: {len(remaining_data)}")
 
 # 打印结果
-print("inspire数据生成完成!")
+print("Inspire data has been generated!")
