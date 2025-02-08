@@ -16,7 +16,6 @@ def load_model_and_tokenizer(model_name, device):
     ).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
-    # 使用DataParallel支持多卡
     if torch.cuda.device_count() > 1:
         model = torch.nn.DataParallel(model)
     
