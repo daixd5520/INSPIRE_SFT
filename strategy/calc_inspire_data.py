@@ -70,5 +70,4 @@ for delete_count in delete_counts:
     
     print(f"{output_file} line count: {len(remaining_data)}")
 
-# 打印结果
 print("Inspire data has been generated!")
